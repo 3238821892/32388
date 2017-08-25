@@ -1,0 +1,43 @@
+#include "stdio.h"
+#include "math.h"
+#define jd 1.3
+void main() //折半查找
+{
+    float a = 0, b = -511.131, c = 0, d;
+    if (a == b)
+    {
+	printf("a=b\n");
+    }
+    else
+    {
+	while (a < b)
+	{
+	    a += jd;
+	}
+	while (a > b)
+	{
+	    a -= jd;
+	}	   //确定下限
+	c = a + jd; //确定上限
+
+	do
+	{
+	    d = (a + c) / 2;
+	    if (d < b)
+	    {
+		a = d; //减小下限
+		printf("a\t%f\t%f\n", d, d - b);
+	    }
+	    else
+	    {
+		if (d > b)
+		{
+		    c = d; //减小上限
+		    printf("c\t%f\t%f\n", d, d - b);
+		}
+		else
+		    printf("d\t%f\t%f\n", d, d - b);
+	    }
+	} while (fabs(d - b) > 0.0001);
+    }
+}
