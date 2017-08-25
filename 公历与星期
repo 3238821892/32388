@@ -1,0 +1,98 @@
+#include "stdio.h"
+#include "math.h"
+main() //公历与星期
+{
+    int year, month, data;
+    int count, a, yd(), md();
+input:
+    printf("输入年 月 日\n");
+inputy:
+    scanf("%d", &year); //年
+    if (year < 0)
+    {
+	printf("年错误，重输年");
+	goto inputy;
+	printf("\n");
+    }
+inputm:
+    scanf("%d", &month); //月
+    if (month > 12 | month < 1)
+    {
+	printf("月错误，重输月");
+	goto inputm;
+	printf("\n");
+    }
+inputd:
+    scanf("%d", &data); //日
+    if (data<0 | data> md(month, year))
+    {
+	printf("日错误，重输日");
+	goto inputd;
+	printf("\n");
+    }
+    count = 365 * year;
+    printf("%d\n", count);
+    for (a = 0; a < year; a++) //历年天数和
+    {
+	if (yd(a) == 366)
+	    count++;
+    }
+    printf("已过年%d天\n", count);
+    for (a = 1; a < month; a++) //当年各月天数和
+    {
+	count += md(a, year);
+    }
+    printf("已过月%d天\n", count);
+    for (a = 0; a < data; a++) //当月天数和
+	count++;
+    printf("公元第%d天\n", count);
+    switch (count % 7)
+    {
+    case 0:
+	printf("星期五");
+	break;
+    case 1:
+	printf("星期六");
+	break;
+    case 2:
+	printf("星期日");
+	break;
+    case 3:
+	printf("星期一");
+	break;
+    case 4:
+	printf("星期二");
+	break;
+    case 5:
+	printf("星期三");
+	break;
+    case 6:
+	printf("星期四");
+	break;
+    }
+    printf("\n", count);
+    goto input;
+}
+yd(y) //年天数
+{
+    if (y % 100 != 0 & y % 4 == 0)
+	return 366;
+    if (y % 100 == 0 & y % 400 == 0)
+	return 366;
+    else
+	return 365;
+}
+md(m, y) //月天数
+{
+    if (m == 1 | m == 3 | m == 5 | m == 7 | m == 8 | m == 10 | m == 12)
+	return 31;
+    if (m == 4 | m == 6 | m == 9 | m == 11)
+	return 30;
+    if (m == 2)
+    {
+	if (yd(y) == 365)
+	    return 28;
+	if (yd(y) == 366)
+	    return 29;
+    }
+}
