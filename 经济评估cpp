@@ -1,0 +1,170 @@
+//#include "stdio.h"
+#include <math.h>
+#include <stdlib.h>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+using namespace std;
+
+#define JD .8
+float a(float b, int c) //净现值系数，b贴现率，c设备年限
+{
+    float d, f = 1, e = 0;
+    int g;
+    d = 1 / (1 + b);
+    if (d == 1)
+    {
+	return c;
+    }
+    else
+    {
+	for (g = 0; g < c; g++)
+	{
+	    f = f * d;
+	}			   //乘方
+	e = d * (1 - f) / (1 - d); //乘方和
+	return e;
+    }
+}
+void main()
+{
+    float tz, sy, sl, tx, zj, xj, ch, xs, a(float b, int c), xz, xzl, syl, sylt, sylm, xzt;
+    int nx;
+
+a:
+    cout << endl
+	 << "\t输入一个数值后按Enter输入下一个数值-"
+	 << endl
+	 << "投资I：";
+    cin >> tz; //投资
+    cout << "年增加收益：";
+    cin >> sy; //收益增加
+    cout << "综合税率：";
+    cin >> sl; //综合税率
+    cout << "贴现率i：";
+    cin >> tx; //贴现率
+    cout << "折旧年限n：";
+    cin >> nx; //折旧年限
+
+    zj = tz / nx;
+    xj = sy * (1 - sl) /*+zj*sl*/;
+    ch = tz / xj;	  //折旧费、年净现金、投资偿还期
+    cout.setf(ios::fixed); //数字显示
+    cout.precision(4);     //小数位数
+    cout << endl
+	 << "年折旧费=\t" << zj
+	 << endl
+	 << "年净收益=\t" << (sy /*-zj*/) * (1 - sl)
+	 << endl
+	 << "年净现金流量F=\t" << xj
+	 << endl
+	 << "偿还期N=\t" << ch
+	 << endl;
+
+    xs = a(tx, nx);
+    xz = xj * xs - tz;
+    xzl = xz / tz * 100; //净现值系数、净现值、净现值率
+    cout << endl
+	 << "净现值系数=\t" << setprecision(5) << xs
+	 << endl
+	 << "净现值NPV=\t" << setprecision(4) << xz
+	 << endl
+	 << "净现值率NPVR=\t" << xzl << "%"
+	 << endl
+	 << endl;
+
+    locale::global(locale(""));
+    ofstream jieguo("结果.txt");
+    locale::global(locale("C"));
+    jieguo.setf(ios::fixed);
+    jieguo << "年折旧费=\t" << setprecision(3) << zj
+	   << endl
+	   << "年净收益=\t" << (sy /*-zj*/) * (1 - sl)
+	   << endl
+	   << "年净现金流量F=\t" << xj
+	   << endl
+	   << "投资偿还期N=\t" << setprecision(2) << ch
+	   << endl;
+    jieguo << endl
+	   << "净现值NPV=\t" << setprecision(2) << xz
+	   << endl
+	   << "净现值率NPVR=\t" << xzl << "%"
+	   << endl;
+
+    syl = 0;
+
+    do
+    {
+	syl += JD;
+    } while (a(syl, nx) > ch);
+    while (a(syl, nx) < ch)
+    {
+	syl -= JD;
+    }		     //确定下限
+    sylt = syl + JD; //确定上限
+    do
+    {
+	sylm = (syl + sylt) / 2; //折半算法，很快
+	xzt = xj * a(sylm, nx) - tz;
+	printf("贴现率=%f=%.2f%%时，净现值=%.5f\n", sylm, sylm * 100, xzt);
+	if (xzt < 0)
+	{
+	    sylt = sylm; //减小上限
+	}
+	else
+	{
+	    if (xzt > 0)
+	    {
+		syl = sylm; //增大下限
+	    }
+	    else
+	    {
+		break;
+	    }
+	}
+    } while ((xzt / tz > 0.00001) | (xzt / tz < -0.00001));
+    syl = sylm;
+
+    sylt = .1;
+    do
+    { //加速贴近算法，较快
+	xzt = a(syl, nx) * xj - tz;
+	while (xzt > 0)
+	{
+	    syl += sylt;
+	    xzt = a(syl, nx) * xj - tz;
+	    cout << "贴现率=" << setprecision(5) << syl
+		 << "=" << setprecision(2) << syl * 100
+		 << "%时，净现值=" << setprecision(5) << xzt << endl; //测试用
+	}
+	sylt = sylt / 10; //折返查找，可删除
+	while (xzt < 0)
+	{
+	    syl -= sylt;
+	    xzt = a(syl, nx) * xj - tz;
+	    cout << "贴现率=" << setprecision(5) << syl
+		 << "=" << setprecision(2) << syl * 100
+		 << "%时，净现值=" << setprecision(5) << xzt << endl; //测试用
+	}
+	sylt = sylt / 10; //提高精度
+    } while (fabs(xzt / tz) > 0.00001);
+
+    jieguo << "内部收益率IRR=\t" << setprecision(2) << syl * 100 << "%" << endl;
+    if (xz < 0)
+    {
+	jieguo << "\n净现值小于0，内部收益率";
+	if (syl > 0)
+	{
+	    jieguo << "有点低\n";
+	}
+	else
+	{
+	    jieguo << "太低了\n";
+	}
+    }
+
+    jieguo << "\n关闭此窗口开始下一次计算";
+    jieguo.close();
+    system("结果.txt");
+    goto a; //再次计算
+}
