@@ -2,7 +2,7 @@
 #include "math.h"
 void main() //变精度查找
 { 
-float a = 0, b = -55.201, c = 100; //c初始精度,
+float a = 0, b = -55.201, c = 100; //c初始精度,可变
 while (fabs(a - b) > 0.0001)
     {
          while(a < b)
