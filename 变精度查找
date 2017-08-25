@@ -1,1 +1,71 @@
-#include <stdio.h>#include "math.h"void main() //变精度查找{    float a = 0, b = -55.201, c = 100; //c初始精度    while (fabs(a - b) > 0.0001)    {    while (a < b)    {        a += c;        printf("+%f\t=%f\t\n", c, a);    }    c = c / 10; //折返查找，可删除    while (a > b)    {        a -= c;        printf("-%f\t=%f\t\n", c, a);    }    c = c / 10; //提高精度    }}
+
+
+#include <stdio.h>
+
+
+#include "math.h"
+
+
+void main() //变精度查找
+
+
+{
+
+
+   
+float a = 0, b = -55.201, c = 100; //c初始精度
+
+
+   
+while (fabs(a - b) > 0.0001)
+
+
+    {
+
+
+         while
+(a < b)
+
+
+         {
+
+
+             a += c;
+
+
+             printf("+%f\t=%f\t\n", c, a);
+
+
+         }
+
+
+         c
+= c / 10; //折返查找，可删除
+
+
+         while
+(a > b)
+
+
+         {
+
+
+             a -= c;
+
+
+             printf("-%f\t=%f\t\n", c, a);
+
+
+         }
+
+
+         c
+= c / 10; //提高精度
+
+
+    }
+
+
+}
+
+
